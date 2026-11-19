@@ -1,0 +1,182 @@
+digraph BidNileMapping {
+  graph [
+    rankdir=LR,
+    bgcolor="#ffffff",
+    pad="0.35",
+    nodesep="0.38",
+    ranksep="1.05",
+    splines=polyline,
+    concentrate=false,
+    compound=true,
+    newrank=true,
+    fontname="Arial",
+    fontsize=20,
+    labelloc="t",
+    label="BIDNILE ONLINE AUCTIONS — TASK 1 RELATIONAL MAPPING\nInitial design: exactly four schemas | PKs underlined | FK arrows point to referenced PKs",
+    size="20,13!"
+  ];
+  node [shape=plain, fontname="Arial", fontsize=10];
+  edge [fontname="Arial", fontsize=8, color="#4b5563", arrowsize=0.75, penwidth=1.05];
+
+  subgraph cluster_geo {
+    label="GEO  |  Reference data"; color="#60a5fa"; penwidth=1.8; style="rounded"; fontname="Arial Bold"; fontsize=15;
+    Country [label=<
+      <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5" COLOR="#2563eb">
+        <TR><TD BGCOLOR="#dbeafe"><B>Geo.Country</B></TD></TR>
+        <TR><TD ALIGN="LEFT"><U>CountryCode</U> : CHAR(2)  <B>[PK]</B></TD></TR>
+        <TR><TD ALIGN="LEFT">NameEn : VARCHAR(60)</TD></TR>
+        <TR><TD ALIGN="LEFT">NameAr : NVARCHAR(60)</TD></TR>
+        <TR><TD ALIGN="LEFT">PhoneCode : VARCHAR(5)</TD></TR>
+      </TABLE>>];
+    City [label=<
+      <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5" COLOR="#2563eb">
+        <TR><TD BGCOLOR="#dbeafe"><B>Geo.City</B></TD></TR>
+        <TR><TD ALIGN="LEFT"><U>CityId</U> : INT IDENTITY <B>[PK]</B></TD></TR>
+        <TR><TD ALIGN="LEFT">Name : NVARCHAR(60)</TD></TR>
+        <TR><TD ALIGN="LEFT">CountryCode : CHAR(2) <B>[FK]</B></TD></TR>
+        <TR><TD ALIGN="LEFT"><I>UQ (CountryCode, Name)</I></TD></TR>
+      </TABLE>>];
+  }
+
+  subgraph cluster_accounts {
+    label="ACCOUNTS  |  Members and wallets"; color="#34d399"; penwidth=1.8; style="rounded"; fontname="Arial Bold"; fontsize=15;
+    Member [label=<
+      <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5" COLOR="#059669">
+        <TR><TD BGCOLOR="#d1fae5"><B>Accounts.Member</B></TD></TR>
+        <TR><TD ALIGN="LEFT"><U>MemberId</U> : UNIQUEIDENTIFIER <B>[PK]</B></TD></TR>
+        <TR><TD ALIGN="LEFT">FullName : NVARCHAR(100)</TD></TR>
+        <TR><TD ALIGN="LEFT">Email : VARCHAR(254) <B>[UQ]</B></TD></TR>
+        <TR><TD ALIGN="LEFT">Mobile : VARCHAR(16)</TD></TR>
+        <TR><TD ALIGN="LEFT">NationalId : VARCHAR(20) <B>[UQ]</B></TD></TR>
+        <TR><TD ALIGN="LEFT">BirthDate : DATE</TD></TR>
+        <TR><TD ALIGN="LEFT">IsVerified : BIT</TD></TR>
+        <TR><TD ALIGN="LEFT">RegisteredAt : DATETIME2(3)</TD></TR>
+        <TR><TD ALIGN="LEFT">CityId : INT <B>[FK]</B></TD></TR>
+        <TR><TD ALIGN="LEFT">InvitedByMemberId : UNIQUEIDENTIFIER NULL <B>[FK]</B></TD></TR>
+      </TABLE>>];
+    Wallet [label=<
+      <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5" COLOR="#059669">
+        <TR><TD BGCOLOR="#d1fae5"><B>Accounts.Wallet</B></TD></TR>
+        <TR><TD ALIGN="LEFT"><U>MemberId</U> : UNIQUEIDENTIFIER <B>[PK, FK]</B></TD></TR>
+        <TR><TD ALIGN="LEFT">Balance : DECIMAL(12,2)</TD></TR>
+        <TR><TD ALIGN="LEFT">HeldAmount : DECIMAL(12,2)</TD></TR>
+        <TR><TD ALIGN="LEFT">CurrencyCode : CHAR(3)</TD></TR>
+        <TR><TD ALIGN="LEFT">UpdatedAt : DATETIME2(3)</TD></TR>
+      </TABLE>>];
+  }
+
+  subgraph cluster_operations {
+    label="OPERATIONS  |  Warehouses and employees"; color="#f59e0b"; penwidth=1.8; style="rounded"; fontname="Arial Bold"; fontsize=15;
+    Warehouse [label=<
+      <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5" COLOR="#d97706">
+        <TR><TD BGCOLOR="#fef3c7"><B>Operations.Warehouse</B></TD></TR>
+        <TR><TD ALIGN="LEFT"><U>WarehouseId</U> : INT IDENTITY <B>[PK]</B></TD></TR>
+        <TR><TD ALIGN="LEFT">WarehouseName : NVARCHAR(80) <B>[UQ]</B></TD></TR>
+        <TR><TD ALIGN="LEFT">Capacity : INT</TD></TR>
+        <TR><TD ALIGN="LEFT">CityId : INT <B>[FK]</B></TD></TR>
+        <TR><TD ALIGN="LEFT">Latitude : FLOAT</TD></TR>
+        <TR><TD ALIGN="LEFT">Longitude : FLOAT</TD></TR>
+        <TR><TD ALIGN="LEFT">ManagerMemberId : UNIQUEIDENTIFIER NULL* <B>[FK, UQ]</B></TD></TR>
+        <TR><TD ALIGN="LEFT">ManagerSince : DATE NULL*</TD></TR>
+      </TABLE>>];
+    Employee [label=<
+      <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5" COLOR="#d97706">
+        <TR><TD BGCOLOR="#fef3c7"><B>Operations.Employee</B></TD></TR>
+        <TR><TD ALIGN="LEFT"><U>MemberId</U> : UNIQUEIDENTIFIER <B>[PK, FK]</B></TD></TR>
+        <TR><TD ALIGN="LEFT">WarehouseId : INT <B>[FK]</B></TD></TR>
+      </TABLE>>];
+  }
+
+  subgraph cluster_commerce {
+    label="COMMERCE  |  Catalogue, items, auctions and bids"; color="#c084fc"; penwidth=1.8; style="rounded"; fontname="Arial Bold"; fontsize=15;
+    Category [label=<
+      <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5" COLOR="#9333ea">
+        <TR><TD BGCOLOR="#f3e8ff"><B>Commerce.Category</B></TD></TR>
+        <TR><TD ALIGN="LEFT"><U>CategoryId</U> : INT (manual code) <B>[PK]</B></TD></TR>
+        <TR><TD ALIGN="LEFT">NameEn : VARCHAR(50) <B>[UQ]</B></TD></TR>
+        <TR><TD ALIGN="LEFT">NameAr : NVARCHAR(50)</TD></TR>
+        <TR><TD ALIGN="LEFT">CommissionPercent : DECIMAL(5,2)</TD></TR>
+        <TR><TD ALIGN="LEFT">ParentCategoryId : INT NULL <B>[FK]</B></TD></TR>
+      </TABLE>>];
+    Item [label=<
+      <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5" COLOR="#9333ea">
+        <TR><TD BGCOLOR="#f3e8ff"><B>Commerce.Item</B></TD></TR>
+        <TR><TD ALIGN="LEFT"><U>ItemId</U> : INT IDENTITY <B>[PK]</B></TD></TR>
+        <TR><TD ALIGN="LEFT">Title : NVARCHAR(150)</TD></TR>
+        <TR><TD ALIGN="LEFT">Description : NVARCHAR(MAX) NULL</TD></TR>
+        <TR><TD ALIGN="LEFT">ConditionScore : TINYINT</TD></TR>
+        <TR><TD ALIGN="LEFT">Specifications : NVARCHAR(MAX) (JSON)</TD></TR>
+        <TR><TD ALIGN="LEFT">SellerMemberId : UNIQUEIDENTIFIER <B>[FK]</B></TD></TR>
+        <TR><TD ALIGN="LEFT">InspectorMemberId : UNIQUEIDENTIFIER <B>[FK]</B></TD></TR>
+        <TR><TD ALIGN="LEFT">CategoryId : INT <B>[FK]</B></TD></TR>
+        <TR><TD ALIGN="LEFT">WarehouseId : INT NULL <B>[FK]</B></TD></TR>
+        <TR><TD ALIGN="LEFT">ListedAt : DATETIME2(3)</TD></TR>
+      </TABLE>>];
+    ItemPhoto [label=<
+      <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5" COLOR="#9333ea">
+        <TR><TD BGCOLOR="#f3e8ff"><B>Commerce.ItemPhoto</B></TD></TR>
+        <TR><TD ALIGN="LEFT"><U>ItemId</U> : INT <B>[PK, FK]</B></TD></TR>
+        <TR><TD ALIGN="LEFT"><U>PhotoPosition</U> : TINYINT <B>[PK]</B></TD></TR>
+        <TR><TD ALIGN="LEFT">PhotoUrl : VARCHAR(500)</TD></TR>
+        <TR><TD ALIGN="LEFT">IsMain : BIT</TD></TR>
+      </TABLE>>];
+    Auction [label=<
+      <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5" COLOR="#9333ea">
+        <TR><TD BGCOLOR="#f3e8ff"><B>Commerce.Auction</B></TD></TR>
+        <TR><TD ALIGN="LEFT"><U>AuctionId</U> : INT IDENTITY <B>[PK]</B></TD></TR>
+        <TR><TD ALIGN="LEFT">ItemId : INT <B>[FK]</B></TD></TR>
+        <TR><TD ALIGN="LEFT">StartingPrice : DECIMAL(12,2)</TD></TR>
+        <TR><TD ALIGN="LEFT">ReservePrice : DECIMAL(12,2) NULL</TD></TR>
+        <TR><TD ALIGN="LEFT">BidIncrement : DECIMAL(12,2)</TD></TR>
+        <TR><TD ALIGN="LEFT">StartAt : DATETIMEOFFSET</TD></TR>
+        <TR><TD ALIGN="LEFT">EndAt : DATETIMEOFFSET</TD></TR>
+        <TR><TD ALIGN="LEFT">Status : VARCHAR(20)</TD></TR>
+      </TABLE>>];
+    Bid [label=<
+      <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5" COLOR="#9333ea">
+        <TR><TD BGCOLOR="#f3e8ff"><B>Commerce.Bid</B></TD></TR>
+        <TR><TD ALIGN="LEFT"><U>BidId</U> : BIGINT IDENTITY <B>[PK]</B></TD></TR>
+        <TR><TD ALIGN="LEFT">AuctionId : INT <B>[FK]</B></TD></TR>
+        <TR><TD ALIGN="LEFT">MemberId : UNIQUEIDENTIFIER <B>[FK]</B></TD></TR>
+        <TR><TD ALIGN="LEFT">Amount : DECIMAL(12,2)</TD></TR>
+        <TR><TD ALIGN="LEFT">PlacedAt : DATETIME2(3)</TD></TR>
+        <TR><TD ALIGN="LEFT">IPAddress : VARCHAR(45)</TD></TR>
+        <TR><TD ALIGN="LEFT"><I>UQ (AuctionId, Amount)</I></TD></TR>
+      </TABLE>>];
+    FollowedAuction [label=<
+      <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5" COLOR="#9333ea">
+        <TR><TD BGCOLOR="#f3e8ff"><B>Commerce.FollowedAuction</B></TD></TR>
+        <TR><TD ALIGN="LEFT"><U>MemberId</U> : UNIQUEIDENTIFIER <B>[PK, FK]</B></TD></TR>
+        <TR><TD ALIGN="LEFT"><U>AuctionId</U> : INT <B>[PK, FK]</B></TD></TR>
+        <TR><TD ALIGN="LEFT">FollowedAt : DATETIME2(3)</TD></TR>
+      </TABLE>>];
+    { rank=same; Category; Item; }
+    { rank=same; ItemPhoto; Auction; }
+    { rank=same; Bid; FollowedAuction; }
+  }
+
+  // Foreign-key arrows: child FK -> referenced parent PK.
+  City -> Country [label="CountryCode"];
+  Member -> City [label="CityId"];
+  Member -> Member [label="InvitedByMemberId", color="#059669", constraint=false];
+  Wallet -> Member [label="MemberId"];
+  Warehouse -> City [label="CityId"];
+  Employee -> Member [label="MemberId"];
+  Employee -> Warehouse [label="WarehouseId", color="#d97706"];
+  Warehouse -> Employee [label="ManagerMemberId", color="#d97706", constraint=false];
+  Category -> Category [label="ParentCategoryId", color="#9333ea", constraint=false];
+  Item -> Member [label="SellerMemberId"];
+  Item -> Employee [label="InspectorMemberId"];
+  Item -> Category [label="CategoryId"];
+  Item -> Warehouse [label="WarehouseId"];
+  ItemPhoto -> Item [label="ItemId  (CASCADE)"];
+  Auction -> Item [label="ItemId"];
+  Bid -> Auction [label="AuctionId"];
+  Bid -> Member [label="MemberId"];
+  FollowedAuction -> Member [label="MemberId"];
+  FollowedAuction -> Auction [label="AuctionId"];
+
+  Legend [shape=note, style=filled, fillcolor="#f9fafb", color="#9ca3af", fontname="Arial", fontsize=9,
+    label="Legend\nUnderlined = Primary Key\n[FK] = Foreign Key\n[UQ] = Unique\nNULL = optional value\nComposite PK: every component is underlined\n* Manager fields are temporarily NULL for circular import; AfterImport makes them required\nPhoto is weak: PK includes ItemId; delete cascades"];
+  {rank=sink; Legend;}
+}
