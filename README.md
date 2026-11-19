@@ -99,16 +99,3 @@ Save the three constraint-error screenshots and the LeetCode Accepted screenshot
 
 Both versions use `O(n)` time and do not use division. The second version uses `O(1)` extra space, not counting the result array.
 
-## GitHub
-
-Use the repository that Simulation Academy created for you. Do not create another repository and do not commit to `main`. Copy the branch name and Pull Request title exactly from the assignment page on the website, then commit as you complete each task and open the PR into `main`.
-
-## Before submitting
-
-- [ ] Fill in your name, group, and ID at the top.
-- [ ] Run `database/BidNile.sql` on a fresh SQL Server database.
-- [ ] Import every Excel data sheet in the listed order.
-- [ ] Run `support/AfterImport.sql` and `support/ValidateData.sql`.
-- [ ] Replace `database/BidNile_Data.sql` with the real SSMS Data only export.
-- [ ] Add all four screenshots to `docs/screenshots/`.
-- [ ] Check the GitHub branch and PR title on Simulation Academy, commit the tasks, and open the PR.
